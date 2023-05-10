@@ -8,6 +8,5 @@ import reactor.core.publisher.Mono
 @Repository
 interface CryptoRepository : R2dbcRepository<Coin, Int> {
     fun findCoinBySymbol(symbol: String): Mono<Coin>
-
     fun findCoinByCryptoId(cryptoId: Int): Mono<Coin>
 }

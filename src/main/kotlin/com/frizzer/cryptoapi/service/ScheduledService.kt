@@ -9,7 +9,10 @@ import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 
 @Service
-class ScheduledService(private val service: CryptoService) {
+class ScheduledService(
+    private val service: CryptoService,
+    private val clientService: ClientService
+) {
 
     @Value("\${values}")
     val currenciesJson: String = ""
@@ -27,12 +30,13 @@ class ScheduledService(private val service: CryptoService) {
 
         val client: WebClient = WebClient.create(baseUrl)
 
-        val id  = "id"
+        val id = "id"
         for (crypto in storedCrypto) {
             client.get()
                 .uri { it.queryParam(id, crypto.id).build() }
                 .retrieve()
                 .bodyToFlux(CoinDTO::class.java)
+                .flatMap { clientService.updateBySymbol(it) }
                 .flatMap { service.update(it) }
                 .subscribe()
         }

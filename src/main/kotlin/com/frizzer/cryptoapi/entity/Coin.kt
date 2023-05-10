@@ -1,6 +1,8 @@
 package com.frizzer.cryptoapi.entity
 
 import com.frizzer.cryptoapi.dto.CoinDTO
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 
@@ -11,6 +13,7 @@ data class Coin(
     var cryptoId: Int,
     @Id
     @org.springframework.data.annotation.Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Int? = null
 )
 
