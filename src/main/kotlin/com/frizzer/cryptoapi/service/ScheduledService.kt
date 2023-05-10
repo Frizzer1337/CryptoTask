@@ -17,12 +17,12 @@ class ScheduledService(
 ) {
 
     @Value("\${values}")
-    val currenciesJson: String = ""
+    private val currenciesJson: String = ""
 
     @Value("\${url.base}")
-    val baseUrl: String = ""
+    private val baseUrl: String = ""
 
-    val id = "id"
+    private val id = "id"
 
     @Scheduled(fixedDelayString = "\${delay.second}")
     fun updateValues() {
@@ -42,7 +42,7 @@ class ScheduledService(
         }.subscribe()
     }
 
-    private fun loadCurrencyFromJson(): Flux<CoinDTO> = jacksonObjectMapper()
+    fun loadCurrencyFromJson(): Flux<CoinDTO> = jacksonObjectMapper()
         .readValue(
             currenciesJson,
             jacksonTypeRef<List<CoinDTO>>()
