@@ -1,0 +1,14 @@
+spring:
+  r2dbc:
+    username: user
+    password: user
+    url: r2dbc:mysql://localhost:3306/db?useSSL=false
+delay:
+  minute: 60000
+  second: 1000
+url:
+  base: "https://api.coinlore.net/api/ticker/"
+values: |
+  [{"id":"90","symbol":"BTC"}, 
+  {"id":"80","symbol":"ETH"}, 
+  {"id":"48543","symbol":"SOL"}]
