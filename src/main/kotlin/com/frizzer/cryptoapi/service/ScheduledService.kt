@@ -12,25 +12,28 @@ import org.springframework.web.reactive.function.client.WebClient
 class ScheduledService(private val service: CryptoService) {
 
     @Value("\${values}")
-    val propertiesJson: String = ""
+    val currenciesJson: String = ""
 
     @Value("\${url.base}")
     val baseUrl: String = ""
 
     @Scheduled(fixedDelayString = "\${delay.second}")
     fun updateValues() {
+
         val storedCrypto: List<CoinDTO> = jacksonObjectMapper().readValue(
-            propertiesJson,
+            currenciesJson,
             jacksonTypeRef<List<CoinDTO>>()
         )
+
         val client: WebClient = WebClient.create(baseUrl)
+
         val id  = "id"
         for (crypto in storedCrypto) {
             client.get()
                 .uri { it.queryParam(id, crypto.id).build() }
                 .retrieve()
                 .bodyToFlux(CoinDTO::class.java)
-                .flatMap { service.save(it) }
+                .flatMap { service.update(it) }
                 .subscribe()
         }
     }
