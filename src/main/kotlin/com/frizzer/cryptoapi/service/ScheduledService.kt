@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
+import reactor.core.publisher.Flux
+import reactor.kotlin.core.publisher.toFlux
 
 @Service
 class ScheduledService(
@@ -20,25 +22,30 @@ class ScheduledService(
     @Value("\${url.base}")
     val baseUrl: String = ""
 
+    val id = "id"
+
     @Scheduled(fixedDelayString = "\${delay.second}")
     fun updateValues() {
 
-        val storedCrypto: List<CoinDTO> = jacksonObjectMapper().readValue(
-            currenciesJson,
-            jacksonTypeRef<List<CoinDTO>>()
-        )
+        val storedCrypto = loadCurrencyFromJson()
 
         val client: WebClient = WebClient.create(baseUrl)
 
-        val id = "id"
-        for (crypto in storedCrypto) {
+        storedCrypto.flatMap {crypto ->
             client.get()
                 .uri { it.queryParam(id, crypto.id).build() }
                 .retrieve()
                 .bodyToFlux(CoinDTO::class.java)
                 .flatMap { clientService.updateBySymbol(it) }
                 .flatMap { service.updateByPrice(it) }
-                .subscribe()
-        }
+                .then()
+        }.subscribe()
     }
+
+    private fun loadCurrencyFromJson(): Flux<CoinDTO> = jacksonObjectMapper()
+        .readValue(
+            currenciesJson,
+            jacksonTypeRef<List<CoinDTO>>()
+        )
+        .toFlux()
 }
