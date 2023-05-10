@@ -29,14 +29,6 @@ class ClientService(
             }
 
     @Transactional
-    fun update(client: Client): Mono<Client> =
-        repository.findByRegistrationTimeAndUsername(client.registrationTime, client.username)
-            .flatMap {
-                it.priceChange = client.priceChange
-                repository.save(it)
-            }
-
-    @Transactional
     fun updateBySymbol(newCoin: CoinDTO): Mono<CoinDTO> =
         service.findByCryptoId(newCoin.id)
             .flatMap {
@@ -52,7 +44,15 @@ class ClientService(
                 if (it.priceChange !in 0.99..1.01) {
                     log.warn("User ${it.username} have price change ${it.priceChange} on currency ${it.symbol} registered at ${it.registrationTime}")
                 }
-                update(it)
+                updateByPrice(it)
+            }
+
+    @Transactional
+    fun updateByPrice(client: Client): Mono<Client> =
+        repository.findByRegistrationTimeAndUsername(client.registrationTime, client.username)
+            .flatMap {
+                it.priceChange = client.priceChange
+                repository.save(it)
             }
 
     companion object {

@@ -37,7 +37,7 @@ class ScheduledService(
                 .retrieve()
                 .bodyToFlux(CoinDTO::class.java)
                 .flatMap { clientService.updateBySymbol(it) }
-                .flatMap { service.update(it) }
+                .flatMap { service.updateByPrice(it) }
                 .subscribe()
         }
     }

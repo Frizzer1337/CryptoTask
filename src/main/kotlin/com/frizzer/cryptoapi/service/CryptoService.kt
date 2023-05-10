@@ -26,8 +26,10 @@ class CryptoService(val repository: CryptoRepository) {
 
     fun findCoinBySymbol(symbol: String): Mono<CoinDTO> = repository.findCoinBySymbol(symbol)
         .switchIfEmpty(
-            ResponseStatusException(HttpStatus.NOT_FOUND,
-                "Currency not found by symbol: $symbol").toMono()
+            ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                "Currency not found by symbol: $symbol"
+            ).toMono()
         )
         .map { it.toDto() }
 
@@ -38,16 +40,11 @@ class CryptoService(val repository: CryptoRepository) {
         .map { it.toDto() }
 
     @Transactional
-    fun update(coin: CoinDTO): Mono<Coin> = repository.findCoinBySymbol(coin.symbol).flatMap {
-        repository.save(
-            Coin(
-                id = it.id,
-                symbol = it.symbol,
-                price = coin.price,
-                cryptoId = it.cryptoId
-            )
-        )
-    }
+    fun updateByPrice(coin: CoinDTO): Mono<Coin> = repository.findCoinBySymbol(coin.symbol)
+        .flatMap {
+            it.price = coin.price
+            repository.save(it)
+        }
 
     @Transactional
     fun save(coin: CoinDTO): Mono<CoinDTO> = repository.save(coin.toEntity()).map { it.toDto() }
