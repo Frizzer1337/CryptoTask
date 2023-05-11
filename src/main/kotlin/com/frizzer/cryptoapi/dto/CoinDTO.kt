@@ -13,5 +13,5 @@ data class CoinDTO(
 fun CoinDTO.toEntity() = Coin(
     symbol = symbol,
     price = price,
-    id = id
+    cryptoId = id
 )

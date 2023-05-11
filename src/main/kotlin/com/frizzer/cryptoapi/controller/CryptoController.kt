@@ -19,6 +19,8 @@ class CryptoController(val service: CryptoService) {
 
     @GetMapping("/{id}")
     fun cryptoById(@PathVariable id: Int): ResponseEntity<Mono<CoinDTO>> =
-        ResponseEntity.ok(service.findById(id))
+        ResponseEntity.ok(service.findByCryptoId(id))
 
+    @GetMapping("/load")
+    fun loadCrypto() : ResponseEntity<Flux<CoinDTO>> = ResponseEntity.ok(service.loadCrypto())
 }
