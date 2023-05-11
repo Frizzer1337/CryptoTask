@@ -5,7 +5,7 @@ create table client
     price_change      decimal(15, 5) not null,
     symbol            varchar(45)    not null,
     username          varchar(45)    not null,
-    registration_time timestamp      not null on update CURRENT_TIMESTAMP,
+    registration_time timestamp      not null,
     start_price       decimal(15, 2) not null,
     constraint id
         unique (id)
