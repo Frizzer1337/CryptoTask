@@ -16,7 +16,7 @@ import reactor.kotlin.core.publisher.toMono
 @Service
 class CryptoService(
     val repository: CryptoRepository,
-    val scheduledService: ScheduledService
+    val jsonService: JsonService
 ) {
 
     fun findAll(): Flux<CoinDTO> = repository.findAll().map { it.toDto() }
@@ -48,7 +48,7 @@ class CryptoService(
 
     @Transactional
     fun loadCrypto(): Flux<CoinDTO> {
-        return scheduledService.loadCurrencyFromJson().flatMap { save(it) }
+        return jsonService.loadCurrencyFromJson().flatMap { save(it) }
     }
 
 
