@@ -10,7 +10,6 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 @Service
@@ -29,14 +28,7 @@ class ClientService(
             }
 
     @Transactional
-    fun updateBySymbol(newCoin: CoinDTO): Mono<CoinDTO> =
-        service.findByCryptoId(newCoin.id)
-            .flatMap {
-                updateByPriceChange(newCoin).then(Mono.just(newCoin))
-            }
-
-    @Transactional
-    fun updateByPriceChange(newCoin: CoinDTO): Flux<Client> =
+    fun updateByPriceChange(newCoin: CoinDTO): Mono<CoinDTO> =
         repository
             .findBySymbol(newCoin.symbol)
             .flatMap {
@@ -46,6 +38,7 @@ class ClientService(
                 }
                 updateByPrice(it)
             }
+            .then(Mono.just(newCoin))
 
     @Transactional
     fun updateByPrice(client: Client): Mono<Client> =
