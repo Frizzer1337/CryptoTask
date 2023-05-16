@@ -30,7 +30,7 @@ class ScheduledService(
                 .uri { it.queryParam(id, crypto.id).build() }
                 .retrieve()
                 .bodyToFlux(CoinDTO::class.java)
-                .flatMap { clientService.updateBySymbol(it) }
+                .flatMap { clientService.updateByPriceChange(it) }
                 .flatMap { service.updateByPrice(it) }
                 .then()
         }.subscribe()
